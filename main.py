@@ -1,7 +1,26 @@
 import json
 import os
 import subprocess
+from colorama import init, Fore, Style
+import time
+import sys
 
+init(autoreset=True)
+
+def print_colored(text, color):
+    print(f"{color}{text}{Style.RESET_ALL}")
+
+def print_success(text):
+    print_colored(text, Fore.GREEN)
+
+def print_error(text):
+    print_colored(text, Fore.RED)
+
+def print_warning(text):
+    print_colored(text, Fore.YELLOW)
+
+def print_info(text):
+    print_colored(text, Fore.CYAN)
 
 def check_os():
     if os.name == "nt":
@@ -37,7 +56,7 @@ def check_winget():
             )
             return True
         except:
-            print("Please install WinGet before running the script!")
+            print_error("Please install WinGet before running the script!")
             exit(1)
 
 
@@ -54,10 +73,10 @@ def check_pipx():
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            print("pipx installed successfully!")
+            print_success("pipx installed successfully!")
             return True
         except:
-            print("Failed to install pipx. Please install it manually.")
+            print_error("Failed to install pipx. Please install it manually.")
             exit(1)
 
 
@@ -75,7 +94,7 @@ def list_programs(programs_data):
 
 
 def install_programs(programs_data):
-    print("List of available programs:")
+    print_info("List of available programs:")
     for idx, program in enumerate(programs_data):
         print(f"{idx + 1}. {program['name']} - {program['description']}")
 
@@ -90,7 +109,7 @@ def install_programs(programs_data):
     
     for program in selected_programs:
         install_info = program[os_type.lower()]
-        print(f"Installing {program['name']}...")
+        print_info(f"Installing {program['name']}...")
 
         if os_type == "Windows":
             if "winget" in install_info and check_winget():
@@ -100,7 +119,7 @@ def install_programs(programs_data):
             elif "pipx" in install_info:
                 install_with_pipx(install_info["pipx"])
             else:
-                print("Windows install instructions not found, edit the list.json file, skipping...")
+                print_warning("Windows install instructions not found, edit the list.json file, skipping...")
 
         elif os_type == "Linux":
             package_manager = install_info.get("package_manager", "").lower()
@@ -117,8 +136,8 @@ def install_programs(programs_data):
                     subprocess.run([install_command], shell=True)
                     print(install_command)
             else:
-                print("Linux install instructions not found, edit the list.json file, skipping...")
-        print(f"{program['name']} installed successfully!")
+                print_warning("Linux install instructions not found, edit the list.json file, skipping...")
+        print_success(f"{program['name']} installed successfully!")
         print()
 
 
@@ -138,13 +157,13 @@ def add_program(programs_data):
         new_program["linux"]["package_manager"] = input("Enter the package manager: ")
         new_program["linux"]["install_command"] = input("Enter the install command: ")
     else:
-        print("Please enter a valid OS.")
+        print_error("Please enter a valid OS.")
         return
     programs_data.append(new_program)
 
     with open("list.json", "w") as json_file:
         json.dump({"programs": programs_data}, json_file, indent=4)
-    print(
+    print_success(
         "Program added successfully! Manually update the list.json file to make further changes."
     )
     print()
@@ -152,7 +171,7 @@ def add_program(programs_data):
 
 def main():
     if os_type == "Windows" or os_type == "Linux":
-        print(
+        print_success(
             f"Welcome to the installer! What Would you like to install? (OS: {os_type})"
         )
     while True:
@@ -160,7 +179,7 @@ def main():
             with open("list.json") as json_file:
                 programs_data = json.load(json_file)["programs"]
         except FileNotFoundError:
-            print(
+            print_error(
                 "Could not find list.json. Please run the program in the same directory as list.json."
             )
             exit(1)
@@ -180,10 +199,10 @@ def main():
             elif choice == 3:
                 add_program(programs_data)
             elif choice == 4:
-                print("Exiting the installer...")
+                print_error("Exiting the installer...")
                 exit(1)
         except ValueError:
-            print("Please enter a valid choice.")
+            print_error("Please enter a valid choice.")
             print()
 
 
@@ -191,5 +210,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\nExiting the installer...")
+        print_error("\nExiting the installer...")
         exit(1)
