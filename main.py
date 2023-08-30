@@ -82,7 +82,7 @@ def install_programs(programs_data):
     selected_indices = input("Enter the indices of programs to install (e.g., 1 3 5), or type 'all' to install all: ")
     print()
 
-    if selected_programs == "all":
+    if selected_indices.lower() == 'all':
         selected_programs = programs_data
     else:
         selected_indices = [int(idx) - 1 for idx in selected_indices.split()]
