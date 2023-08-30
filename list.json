@@ -1,0 +1,56 @@
+{
+    "programs": [
+        {
+            "name": "nmap",
+            "description": "Network mapping tool",
+            "windows": {
+                "winget": "Insecure.Nmap"
+            },
+            "linux": {
+                "package_manager": "apt",
+                "install_command": "sudo apt-get install nmap"
+            }
+        },
+        {
+            "name": "burpsuite",
+            "description": "Web vulnerability scanner",
+            "windows": {
+                "winget": "PortSwigger.BurpSuiteCommunity"
+            },
+            "linux": {
+                "install_command": "wget https://portswigger-cdn.net/burp/releases/download?product=community&version=2023.9.3&type=Linux -O burpsuite.sh && chmod +x burpsuite.sh && ./burpsuite.sh -q"
+            }
+        },
+        {
+            "name": "impacket",
+            "description": "Network library",
+            "windows": {
+                "pipx": "impacket"
+            },
+            "linux": {
+                "pipx": "impacket"
+            }
+        },
+        {
+            "name": "hashcat",
+            "description": "Password cracker",
+            "windows": {
+                "winget": "hashcat"
+            },
+            "linux": {
+                "package_manager": "apt",
+                "install_command": "sudo apt-get install hashcat"
+            }
+        },
+        {
+            "name": "metasploit",
+            "description": "Penetration testing framework",
+            "windows": {
+                "winget": "rapid7.metasploit"
+            },
+            "linux": {
+                "install_command": "curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall"
+            }
+        }
+    ]
+}
