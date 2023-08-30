@@ -67,6 +67,11 @@ def check_pipx():
             exit(1)
 
 
+def install_with_pipx(app_name):
+    if check_pipx():
+        print(f"pipx install {app_name}")
+        # subprocess.run(["pipx", "install", app_name])
+
 def list_programs(programs_data):
     print("List of available programs:")
     for program in programs_data:
@@ -76,39 +81,33 @@ def list_programs(programs_data):
 
 def install_programs(programs_data):
     print("Starting Installation!")
+    
     for program in programs_data:
         install_info = program[os_type.lower()]
         print(f"Installing {program['name']}...")
-
+        
         if os_type == "Windows":
-            if "winget" in install_info:
+            if "winget" in install_info and check_winget():
                 app_name = install_info["winget"]
                 print(f"winget install -e --source winget {app_name}")
-                # subprocess.run(
-                #     "winget", "install", "-e", "--source", "winget", app_name
-                # )
-            else:
-                print(
-                    "Skipping installation of this program as it is not available on WinGet."
-                )
+                # subprocess.run(["winget", "install", "-e", "--source", "winget", app_name])
+            elif "pipx" in install_info:
+                install_with_pipx(install_info["pipx"])
 
         elif os_type == "Linux":
-            if install_info["package_manager"]:
-                package_manager = install_info["package_manager"]
-                if package_manager == manager.lower():
-                    install_command = install_info["install_command"]
-                    # subprocess.run([package_manager, install_command], shell=True)
+            package_manager = install_info.get("package_manager", "").lower()
+            if package_manager == manager.lower():
+                install_command = install_info.get("install_command", "")
+                if install_command:
                     print(f"{package_manager} {install_command}")
+                    # subprocess.run([package_manager, install_command], shell=True)
+            elif "pipx" in install_info:
+                install_with_pipx(install_info["pipx"])
             else:
-                install_command = install_info["install_command"]
-                # subprocess.run([install_command], shell=True)
-                print(install_command)
-
-        elif os_type == "Windows" or os_type == "Linux" and "pipx" in install_info:
-            if check_pipx():
-                app_name = install_info["pipx"]
-                # subprocess.run(["pipx", "install", app_name])
-                print(f"pipx install {app_name}")
+                install_command = install_info.get("install_command", "")
+                if install_command:
+                    # subprocess.run([install_command], shell=True)
+                    print(install_command)
 
         print(f"{program['name']} installed successfully!")
         print()
