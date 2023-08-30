@@ -29,11 +29,6 @@ os_type = check_os()
 manager = check_linux_package_manager()
 
 
-def setup_winget():
-    print("Installing WinGet...")
-    # TODO
-
-
 def check_winget():
     if os_type == "Windows":
         try:
@@ -42,8 +37,7 @@ def check_winget():
             )
             return True
         except:
-            # implement winget install logic? setup_winget()
-            print("Failed to install WinGet. Please install it manually.")
+            print("Please install WinGet before running the script!")
             exit(1)
 
 
@@ -72,6 +66,7 @@ def install_with_pipx(app_name):
         print(f"pipx install {app_name}")
         # subprocess.run(["pipx", "install", app_name])
 
+
 def list_programs(programs_data):
     print("List of available programs:")
     for program in programs_data:
@@ -81,11 +76,11 @@ def list_programs(programs_data):
 
 def install_programs(programs_data):
     print("Starting Installation!")
-    
+
     for program in programs_data:
         install_info = program[os_type.lower()]
         print(f"Installing {program['name']}...")
-        
+
         if os_type == "Windows":
             if "winget" in install_info and check_winget():
                 app_name = install_info["winget"]
@@ -93,6 +88,8 @@ def install_programs(programs_data):
                 # subprocess.run(["winget", "install", "-e", "--source", "winget", app_name])
             elif "pipx" in install_info:
                 install_with_pipx(install_info["pipx"])
+            else:
+                print("Windows install instructions not found, edit the list.json file.")
 
         elif os_type == "Linux":
             package_manager = install_info.get("package_manager", "").lower()
@@ -103,14 +100,43 @@ def install_programs(programs_data):
                     # subprocess.run([package_manager, install_command], shell=True)
             elif "pipx" in install_info:
                 install_with_pipx(install_info["pipx"])
-            else:
+            elif "install_command" in install_info:
                 install_command = install_info.get("install_command", "")
                 if install_command:
                     # subprocess.run([install_command], shell=True)
                     print(install_command)
-
+            else:
+                print("Linux install instructions not found, edit the list.json file.")
         print(f"{program['name']} installed successfully!")
         print()
+
+
+def add_program(programs_data):
+    new_program = {
+        "name": input("Enter the name of the program: "),
+        "description": input("Enter the description of the program: "),
+        "windows": {},
+        "linux": {},
+    }
+
+    os_choice = input("Enter the OS to install the program on (Windows/Linux): ")
+
+    if os_choice.lower() == "windows":
+        new_program["windows"]["winget"] = input("Enter the WinGet App ID: ")
+    elif os_choice.lower() == "linux":
+        new_program["linux"]["package_manager"] = input("Enter the package manager: ")
+        new_program["linux"]["install_command"] = input("Enter the install command: ")
+    else:
+        print("Please enter a valid OS.")
+        return
+    programs_data.append(new_program)
+
+    with open("list.json", "w") as json_file:
+        json.dump({"programs": programs_data}, json_file, indent=4)
+    print(
+        "Program added successfully! Manually update the list.json file to make further changes."
+    )
+    print()
 
 
 def main():
@@ -118,7 +144,6 @@ def main():
         print(
             f"Welcome to the installer! What Would you like to install? (OS: {os_type})"
         )
-
     while True:
         try:
             with open("list.json") as json_file:
@@ -128,10 +153,10 @@ def main():
                 "Could not find list.json. Please run the program in the same directory as list.json."
             )
             exit(1)
-
         print("1. Install the programs")
         print("2. List the programs")
-        print("3. Exit the installer")
+        print("3. Add a program")
+        print("4. Exit the installer")
 
         try:
             choice = int(input("Enter your choice: "))
@@ -141,6 +166,8 @@ def main():
             elif choice == 2:
                 list_programs(programs_data)
             elif choice == 3:
+                add_program(programs_data)
+            elif choice == 4:
                 print("Exiting the installer...")
                 exit(1)
         except ValueError:
