@@ -23,7 +23,13 @@ The CypherOps Spyware Toolkit is a simple and versatile command-line tool design
    cd spyware-toolkit
    ```
 
-3. **Run the Toolkit:** Execute the toolkit by running the main Python script:
+3. **Install Required Packages:** Install the necessary Python packages using the `requirements.txt` file:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the Toolkit:** Execute the toolkit by running the main Python script:
 
    - On Windows:
 
@@ -37,7 +43,7 @@ The CypherOps Spyware Toolkit is a simple and versatile command-line tool design
      python3 main.py
      ```
 
-4. **Follow the Menu:** Choose the desired action from the provided menu options.
+5. **Follow the Menu:** Choose the desired action from the provided menu options.
 
 ## Usage
 

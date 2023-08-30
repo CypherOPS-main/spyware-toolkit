@@ -2,8 +2,6 @@ import json
 import os
 import subprocess
 from colorama import init, Fore, Style
-import time
-import sys
 
 init(autoreset=True)
 
