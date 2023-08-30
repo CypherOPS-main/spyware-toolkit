@@ -91,7 +91,7 @@ def list_programs(programs_data):
     print("List of available programs:")
     for program in programs_data:
         print(f"{program['name']} - {program['description']}")
-        print()
+    print()
 
 
 def install_programs(programs_data):
