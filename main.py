@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# 42
+
 import json
 import os
 import subprocess
