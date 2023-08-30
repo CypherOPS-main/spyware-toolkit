@@ -107,8 +107,8 @@ def install_programs(programs_data):
             if package_manager == manager.lower():
                 install_command = install_info.get("install_command", "")
                 if install_command:
-                    print(f"{package_manager} {install_command}")
-                    subprocess.run([package_manager, install_command], shell=True)
+                    print(f"{install_command}")
+                    subprocess.run([install_command], shell=True)
             elif "pipx" in install_info:
                 install_with_pipx(install_info["pipx"])
             elif "install_command" in install_info:
