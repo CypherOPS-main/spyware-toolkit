@@ -64,7 +64,7 @@ def check_pipx():
 def install_with_pipx(app_name):
     if check_pipx():
         print(f"pipx install {app_name}")
-        # subprocess.run(["pipx", "install", app_name])
+        subprocess.run(["pipx", "install", app_name])
 
 
 def list_programs(programs_data):
@@ -75,9 +75,20 @@ def list_programs(programs_data):
 
 
 def install_programs(programs_data):
-    print("Starting Installation!")
+    print("List of available programs:")
+    for idx, program in enumerate(programs_data):
+        print(f"{idx + 1}. {program['name']} - {program['description']}")
 
-    for program in programs_data:
+    selected_programs = input("Enter the indices of programs to install (e.g., 1 3 5), or type 'all' to install all: ")
+    print()
+
+    if selected_programs == "all":
+        selected_programs = programs_data
+    else:
+        selected_indices = [int(idx) - 1 for idx in selected_indices.split()]
+        selected_programs = [programs_data[idx] for idx in selected_indices]
+    
+    for program in selected_programs:
         install_info = program[os_type.lower()]
         print(f"Installing {program['name']}...")
 
@@ -85,11 +96,11 @@ def install_programs(programs_data):
             if "winget" in install_info and check_winget():
                 app_name = install_info["winget"]
                 print(f"winget install -e --source winget {app_name}")
-                # subprocess.run(["winget", "install", "-e", "--source", "winget", app_name])
+                subprocess.run(["winget", "install", "-e", "--source", "winget", app_name])
             elif "pipx" in install_info:
                 install_with_pipx(install_info["pipx"])
             else:
-                print("Windows install instructions not found, edit the list.json file.")
+                print("Windows install instructions not found, edit the list.json file, skipping...")
 
         elif os_type == "Linux":
             package_manager = install_info.get("package_manager", "").lower()
@@ -97,16 +108,16 @@ def install_programs(programs_data):
                 install_command = install_info.get("install_command", "")
                 if install_command:
                     print(f"{package_manager} {install_command}")
-                    # subprocess.run([package_manager, install_command], shell=True)
+                    subprocess.run([package_manager, install_command], shell=True)
             elif "pipx" in install_info:
                 install_with_pipx(install_info["pipx"])
             elif "install_command" in install_info:
                 install_command = install_info.get("install_command", "")
                 if install_command:
-                    # subprocess.run([install_command], shell=True)
+                    subprocess.run([install_command], shell=True)
                     print(install_command)
             else:
-                print("Linux install instructions not found, edit the list.json file.")
+                print("Linux install instructions not found, edit the list.json file, skipping...")
         print(f"{program['name']} installed successfully!")
         print()
 
@@ -160,6 +171,7 @@ def main():
 
         try:
             choice = int(input("Enter your choice: "))
+            print()
 
             if choice == 1:
                 install_programs(programs_data)
@@ -176,4 +188,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nExiting the installer...")
+        exit(1)
