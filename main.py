@@ -79,7 +79,7 @@ def install_programs(programs_data):
     for idx, program in enumerate(programs_data):
         print(f"{idx + 1}. {program['name']} - {program['description']}")
 
-    selected_programs = input("Enter the indices of programs to install (e.g., 1 3 5), or type 'all' to install all: ")
+    selected_indices = input("Enter the indices of programs to install (e.g., 1 3 5), or type 'all' to install all: ")
     print()
 
     if selected_programs == "all":
