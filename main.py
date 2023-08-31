@@ -116,7 +116,7 @@ def install_programs(programs_data):
             if "winget" in install_info and check_winget():
                 app_name = install_info["winget"]
                 print(f"winget install -e --source winget {app_name}")
-                subprocess.run(["winget", "install", "-e", "--source", "winget", app_name])
+                subprocess.run(["winget", "install", "--source", "winget", app_name])
             elif "pipx" in install_info:
                 install_with_pipx(install_info["pipx"])
             else:
